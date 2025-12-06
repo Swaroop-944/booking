@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie Ticket Booking</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #8fd3f4 0%, #fceabb 100%);
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #fcf7f7;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px #0002;
+      padding: 30px 40px;
+    }
+    h2 {
+      text-align: center;
+      color: #1e90ff;
+    }
+    form {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fafdff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    label {
+      display: block;
+      margin: 12px 0 4px 0;
+      font-weight: 500;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+      border: 1px solid #b0c4de;
+      border-radius: 5px;
+      font-size: 1em;
+      background: #fafdff;
+    }
+    button {
+      background: #1e90ff;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    #confirmation {
+      display: none;
+      background: #e6ffe6;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      color: #1b7e1b;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Movie Ticket Booking</h2>
+    <form id="movie-booking-form">
+      <label for="movie-hall">Movie Hall</label>
+      <select id="movie-hall" name="movie-hall" required>
+        <option value="">--Select Hall--</option>
+        <option value="PVR Cinemas">PVR Cinemas</option>
+        <option value="INOX">INOX</option>
+        <option value="Cinepolis">Cinepolis</option>
+        <option value="Carnival Cinemas">Carnival Cinemas</option>
+        <option value="Miraj Cinemas">Miraj Cinemas</option>
+      </select>
+
+      <label for="movie-name">Movie Name</label>
+      <select id="movie-name" name="movie-name" required>
+        <option value="">--Select Movie--</option>
+        <option value="Inception">Inception</option>
+        <option value="Avengers: Endgame">Avengers: Endgame</option>
+        <option value="Jawan">Jawan</option>
+        <option value="RRR">RRR</option>
+        <option value="Pushpa">Pushpa</option>
+        <option value="Dune">Dune</option>
+      </select>
+
+      <label for="date">Date</label>
+      <input type="date" id="date" name="date" required>
+
+      <label for="show-time">Show Time</label>
+      <select id="show-time" name="show-time" required>
+        <option value="">--Select Time--</option>
+        <option value="10:00 AM">10:00 AM</option>
+        <option value="1:00 PM">1:00 PM</option>
+        <option value="4:00 PM">4:00 PM</option>
+        <option value="7:00 PM">7:00 PM</option>
+        <option value="10:00 PM">10:00 PM</option>
+      </select>
+
+      <label for="seat-type">Seat Type</label>
+      <select id="seat-type" name="seat-type" required>
+        <option value="">--Select Seat Type--</option>
+        <option value="Regular">Regular</option>
+        <option value="Premium">Premium</option>
+        <option value="Recliner">Recliner</option>
+        <option value="Balcony">Balcony</option>
+      </select>
+
+      <label for="tickets">Number of Tickets</label>
+      <input type="number" id="tickets" name="tickets" min="1" max="10" required>
+
+      <label for="mobile">Mobile Number</label>
+      <input type="tel" id="mobile" name="mobile" pattern="[6-9]\d{9}" maxlength="10" required>
+
+      <label for="price">Price (₹)</label>
+      <input type="text" id="price" name="price" readonly style="background:#f0f0f0;">
+
+      <button type="submit">Book Ticket</button>
+    </form>
+
+    <div id="confirmation">
+      <h3>Booking Confirmed!</h3>
+      <p id="confirm-details"></p>
+      <p><strong>Booking ID:</strong> <span id="booking-id"></span></p>
+    </div>
+  </div>
+  <script>
+    // Simple price logic based on seat type and tickets
+    function getPrice(seatType, tickets) {
+      let base = 0;
+      switch(seatType) {
+        case "Regular": base = 200; break;
+        case "Premium": base = 350; break;
+        case "Recliner": base = 500; break;
+        case "Balcony": base = 300; break;
+        default: base = 0;
+      }
+      tickets = parseInt(tickets) || 0;
+      return base * tickets;
+    }
+
+    function updatePrice() {
+      const seatType = document.getElementById('seat-type').value;
+      const tickets = document.getElementById('tickets').value;
+      document.getElementById('price').value = getPrice(seatType, tickets);
+    }
+
+    document.getElementById('seat-type').addEventListener('change', updatePrice);
+    document.getElementById('tickets').addEventListener('input', updatePrice);
+
+    document.getElementById('movie-booking-form').onsubmit = function(e) {
+      e.preventDefault();
+      const hall = document.getElementById('movie-hall').value;
+      const movie = document.getElementById('movie-name').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('show-time').value;
+      const seatType = document.getElementById('seat-type').value;
+      const tickets = document.getElementById('tickets').value;
+      const mobile = document.getElementById('mobile').value;
+      const price = document.getElementById('price').value;
+      // Generate a simple booking ID
+      const bookingId = 'MOVIE' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('confirmation').style.display = 'block';
+      document.getElementById('confirm-details').innerText =
+        `Movie: ${movie}
+Hall: ${hall}
+Date: ${date}
+Show Time: ${time}
+Seat Type: ${seatType}
+Tickets: ${tickets}
+Mobile: ${mobile}
+Price: ₹${price}
+Your movie ticket is confirmed!`;
+      document.getElementById('booking-id').innerText = bookingId;
+      document.getElementById('movie-booking-form').reset();
+      document.getElementById('price').value = "";
+    };
+  </script>
+</body>
